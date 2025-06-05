@@ -1,0 +1,14 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "json-logs-mcp-server"
+version = "0.1.0"
+description = "MCP Server for analyzing Python JSON logs"
+dependencies = [
+    "mcp>=1.0.0",
+]
+
+[project.scripts]
+json-logs-mcp-server = "json_logs_mcp_server:main"

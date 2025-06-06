@@ -19,7 +19,7 @@ A Model Context Protocol (MCP) server that enables Claude Desktop (or any MCP cl
 
 1. Clone this repository:
 ```bash
-git clone https://github.com/mfreeman/json-logs-mcp-server.git
+git clone https://github.com/mfreeman451/json-logs-mcp-server.git
 cd json-logs-mcp-server
 ```
 

@@ -1,9 +1,9 @@
 #!/bin/bash
-# Save as: /Users/mfreeman/src/nco-mcp/run-json-logs-server.sh
+# Save as: /Users/mfreeman/src/json-logs-mcp-server/run-json-logs-server.sh
 # Make executable: chmod +x run-json-logs-server.sh
 
 # Change to the project directory
-cd /Users/mfreeman/src/nco-mcp
+cd /Users/mfreeman/src/json-logs-mcp-server
 
 # Check if .venv exists
 if [ ! -d ".venv" ]; then

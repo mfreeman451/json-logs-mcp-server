@@ -7,6 +7,7 @@ This server analyzes JSON log files using stdio transport for local access.
 """
 
 import json
+import os
 import sys
 from datetime import datetime
 from pathlib import Path
@@ -18,7 +19,9 @@ from mcp.server.lowlevel import Server
 from pydantic import AnyUrl
 
 # Configuration
-LOG_DIR = "/Users/mfreeman/src/nco-mcp/logs"
+
+# MCP_JSON_LOGS_DIR
+LOG_DIR = Path(os.getenv("MCP_JSON_LOGS_DIR", "/var/log/mcp/json_logs"))
 
 
 class JsonLogAnalyzer:

@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """
-JSON Logs MCP Server - Remote HTTP/SSE Version
+JSON Logs MCP Server - Local stdio Version
 Save as: json_logs_mcp_server.py
 
-This server analyzes JSON log files using HTTP/SSE transport for remote access.
+This server analyzes JSON log files using stdio transport for local access.
 """
 
 import json
@@ -11,13 +11,14 @@ import sys
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional
+import anyio
 import click
 import mcp.types as types
 from mcp.server.lowlevel import Server
 from pydantic import AnyUrl
 
 # Configuration
-LOG_DIR = "/Users/v161400/src/netdev/nco/logs"
+LOG_DIR = "/Users/mfreeman/src/nco-mcp/logs"
 
 
 class JsonLogAnalyzer:
@@ -275,23 +276,24 @@ log_analyzer = JsonLogAnalyzer()
 @click.option("--port", default=8000, help="Port to listen on for SSE")
 @click.option(
     "--transport",
-    type=click.Choice(["sse"]),
-    default="sse",
+    type=click.Choice(["stdio", "sse"]),
+    default="stdio",
     help="Transport type",
 )
 def main(port: int, transport: str) -> int:
     """Run the JSON Logs MCP Server"""
 
-    print(f"🚀 Starting JSON Logs MCP Server with {transport} transport on port {port}...")
-    print(f"📁 Log directory: {log_analyzer.log_directory.absolute()}")
+    if transport == "stdio":
+        print(f"🚀 Starting JSON Logs MCP Server with stdio transport...", file=sys.stderr)
+        print(f"📁 Log directory: {log_analyzer.log_directory.absolute()}", file=sys.stderr)
 
-    # Check if logs directory exists
-    if not log_analyzer.log_directory.exists():
-        print(f"⚠️  Warning: Logs directory '{log_analyzer.log_directory}' does not exist")
-        print("   Create it and add some .log files to get started")
-    else:
-        log_files = log_analyzer.get_log_files()
-        print(f"📄 Found {len(log_files)} log files")
+        # Check if logs directory exists
+        if not log_analyzer.log_directory.exists():
+            print(f"⚠️  Warning: Logs directory '{log_analyzer.log_directory}' does not exist", file=sys.stderr)
+            print("   Create it and add some .log files to get started", file=sys.stderr)
+        else:
+            log_files = log_analyzer.get_log_files()
+            print(f"📄 Found {len(log_files)} log files", file=sys.stderr)
 
     # Create the MCP server
     app = Server("json-logs-mcp-server")
@@ -480,7 +482,7 @@ def main(port: int, transport: str) -> int:
                 )
             ]
 
-    # Set up SSE transport
+    # Set up transport
     if transport == "sse":
         from mcp.server.sse import SseServerTransport
         from starlette.applications import Starlette
@@ -524,6 +526,17 @@ def main(port: int, transport: str) -> int:
 
         import uvicorn
         uvicorn.run(starlette_app, host="0.0.0.0", port=port)
+    else:
+        # stdio transport (local)
+        from mcp.server.stdio import stdio_server
+
+        async def arun():
+            async with stdio_server() as streams:
+                await app.run(
+                    streams[0], streams[1], app.create_initialization_options()
+                )
+
+        anyio.run(arun)
 
     return 0
 

@@ -2,8 +2,8 @@
   "mcpServers": {
     "json-logs": {
       "command": "python",
-      "args": ["/Users/v161400/src/netdev/nco/mcp/json_logs_mcp_server.py"],
-      "cwd": "/Users/v161400/src/netdev/nco"
+      "args": ["/Users/mfreeman/src/nco/json_logs_mcp_server.py"],
+      "cwd": "/Users/mfreeman/src/nco"
     }
   }
 }
